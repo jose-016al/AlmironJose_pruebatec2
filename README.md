@@ -1,4 +1,4 @@
-# TurnerApp
+# Prueba técnica 2 - Sistema de turnos
 La aplicación es un panel de control para gestionar turnos relacionados con trámites gubernamentales. Incluye un módulo para ciudadanos y sus respectivos turnos. Cada sección del panel se explicará en detalle más adelante. Además, se ha diseñado un sidebar que estará disponible en todo momento, facilitando una navegación cómoda y rápida entre las diferentes secciones.
 ## Inicio
 En esta sección se realiza una llamada a todos los turnos y se filtran según la fecha actual, mostrando únicamente los turnos correspondientes al día de hoy, ordenados por hora. Además, el panel principal permite cambiar el estado de un turno de manera sencilla mediante un interruptor. Este switch, que se acciona dinámicamente, facilita el cambio de estado entre `En Espera` y `Ya Atendido`, o viceversa, según sea necesario. El interruptor aparecerá desactivado cuando el turno esté `En Espera` y se activará automáticamente al marcar el turno como `Ya Atendido`.
