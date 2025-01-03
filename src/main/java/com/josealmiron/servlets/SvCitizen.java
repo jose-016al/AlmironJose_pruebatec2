@@ -3,7 +3,9 @@ package com.josealmiron.servlets;
 import com.josealmiron.logica.Citizen;
 import com.josealmiron.logica.Controladora;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,11 +25,11 @@ public class SvCitizen extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        List<Citizen> listCitizens = control.traerCitizens();
 
-        // request.setAttribute("citizens", listCitizens);
-        request.getSession().setAttribute("citizens", listCitizens); 
+        List<Citizen> citizens = control.getCitizens().stream()
+                .sorted(Comparator.comparing(Citizen::getName).thenComparing(Citizen::getSurname))
+                .collect(Collectors.toList());
+        request.getSession().setAttribute("citizens", citizens);
 
         request.getRequestDispatcher("citizen.jsp").forward(request, response);
     }
@@ -41,13 +43,19 @@ public class SvCitizen extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
 
+        if (!control.validateCitizen(name, surname, email, phone)) {
+            request.setAttribute("error", "Datos inválidos. Verifica los campos ingresados.");
+            request.getRequestDispatcher("/newCitizen.jsp").forward(request, response);
+            return;
+        }
+
         Citizen citizen = new Citizen();
         citizen.setName(name);
         citizen.setSurname(surname);
         citizen.setEmail(email);
         citizen.setPhone(phone);
 
-        control.crearCitizen(citizen);
+        control.createCitizen(citizen);
 
         response.sendRedirect("SvCitizen");
     }

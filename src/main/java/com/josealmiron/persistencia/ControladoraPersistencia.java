@@ -12,11 +12,11 @@ public class ControladoraPersistencia {
     CitizenJpaController citizenJPA = new CitizenJpaController();
     AppointmentJpaController appointmentJPA = new AppointmentJpaController();
 
-    public void crearCitizen(Citizen citizen) {
+    public void createCitizen(Citizen citizen) {
         citizenJPA.create(citizen);
     }
 
-    public void eliminarCitizen(Long id) {
+    public void deleteCitizen(Long id) {
         try {
             citizenJPA.destroy(id);
         } catch (NonexistentEntityException ex) {
@@ -24,11 +24,11 @@ public class ControladoraPersistencia {
         }
     }
 
-    public List<Citizen> traerCitizens() {
+    public List<Citizen> getCitizens() {
         return citizenJPA.findCitizenEntities();
     }
 
-    public void editarCitizen(Citizen citizen) {
+    public void editCitizen(Citizen citizen) {
         try {
             citizenJPA.edit(citizen);
         } catch (Exception ex) {
@@ -39,12 +39,16 @@ public class ControladoraPersistencia {
     public Citizen getCitizen(Long id) {
         return citizenJPA.findCitizen(id);
     }
+    
+    public boolean validateCitizen(String name, String surname, String email, String phone) {
+        return CitizenValidator.validateCitizen(name, surname, email, phone);
+    }
 
-    public void crearAppointment(Appointment appointment) {
+    public void createAppointment(Appointment appointment) {
         appointmentJPA.create(appointment);
     }
 
-    public void eliminarAppointment(Long id) {
+    public void deleteAppointment(Long id) {
         try {
             appointmentJPA.destroy(id);
         } catch (NonexistentEntityException ex) {
@@ -52,11 +56,11 @@ public class ControladoraPersistencia {
         }
     }
 
-    public List<Appointment> traerAppointments() {
+    public List<Appointment> getAppointments() {
         return appointmentJPA.findAppointmentEntities();
     }
 
-    public void editarAppointment(Appointment appointment) {
+    public void editAppointment(Appointment appointment) {
         try {
             appointmentJPA.edit(appointment);
         } catch (Exception ex) {

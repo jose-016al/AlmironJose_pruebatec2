@@ -8,6 +8,7 @@ com/josealmiron/persistencia/ControladoraPersistencia.class
 com/josealmiron/logica/Controladora.class
 com/josealmiron/logica/Citizen_.class
 com/josealmiron/persistencia/exceptions/PreexistingEntityException.class
+com/josealmiron/persistencia/CitizenValidator.class
 com/josealmiron/servlets/SvAppointmentUpdate.class
 com/josealmiron/servlets/SvCitizen.class
 com/josealmiron/logica/Appointment.class

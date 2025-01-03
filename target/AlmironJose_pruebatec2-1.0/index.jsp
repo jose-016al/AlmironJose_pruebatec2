@@ -1,86 +1,152 @@
-<%@page import="com.josealmiron.logica.Appointment"%>
 <%@page import="java.util.List"%>
+<%@page import="com.josealmiron.logica.Appointment"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-        <title>TurnerApp</title>
-    </head>
-    <body>
-        <%@include file="header.jsp"%>
-        <div class="w-full md:w-4/5 mx-auto mt-20">
-            <h2 class="text-2xl font-bold text-white">Turnos de hoy</h2>
-            <div class="relative overflow-x-auto sm:rounded-lg w-full mt-3">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-400">
-                    <thead class="text-xs text-gray-400 uppercase bg-gray-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                ID
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Fecha
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Descripción
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Estado
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Ciudadano
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Cambiar estado
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            List<Appointment> appointments = (List<Appointment>) session.getAttribute("todaysAppointments");
-                            if (appointments != null && !appointments.isEmpty()) {
-                                for (Appointment appointment : appointments) {
-                                    System.out.println(appointment.getStatus());
-                        %>
-                        <tr class="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700">
-                            <th class="px-6 py-4">
-                                <%= appointment.getId()%>
-                            </th>
-                            <td class="px-6 py-4"><%= appointment.getAssignedDateFormatted()%></td>
-                            <td class="px-6 py-4"><%= appointment.getDescription()%></td>
-                            <td class="px-6 py-4"><%= appointment.getStatus()%></td>
-                            <td class="px-6 py-4"><%= appointment.getCitizen()%></td>
-                            <td class="px-6 py-4">
-                                <form action="SvIndex" method="POST" class="flex justify-center items-center">
-                                    <input type="hidden" name="appointmentId" value="<%= appointment.getId()%>">
+<html lang="es">
+    <%@include file="head.jsp"%>
+    <body id="page-top">
 
-                                    <input type="checkbox" name="status" class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                           <%= appointment.getStatus().equals("Ya Atendido") ? "checked" : ""%> />
-                                </form>
-                            </td>
-                        </tr>
-                        <%
-                            }
-                        } else {
-                        %>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-500">No hay turnos disponibles</td>
-                        </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%@include file="sidebar.jsp"%>
+            <!-- End of Sidebar -->
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid mt-4">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <!-- Sidebar Toggle (Topbar) -->
+                            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                                <i class="fa fa-bars"></i>
+                            </button>
+
+                            <!-- Page Heading -->
+                            <h1 class="h3 m-0 text-gray-800">Turnos de hoy</h1>
+                        </div>
+
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Hora</th>
+                                                <th scope="col">Descripci&oacute;n</th>
+                                                <th scope="col">Estado</th>
+                                                <th scope="col">Ciudadano</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%
+                                                List<Appointment> appointments = (List<Appointment>) session.getAttribute("todaysAppointments");
+                                                if (appointments != null && !appointments.isEmpty()) {
+                                                    for (Appointment appointment : appointments) {
+                                            %>
+                                            <tr>
+                                                <th><%= appointment.getId()%></th>
+                                                <td><%= appointment.getAssignedDateFormatted()[1]%></td>
+                                                <td><%= appointment.getDescription()%></td>
+                                                <td><%= appointment.getStatus()%></td>
+                                                <td><%= appointment.getCitizen()%></td>
+                                                <td>
+                                                    <form action="SvIndex" method="POST" class="custom-switch">
+                                                        <input type="hidden" name="appointmentId" value="<%= appointment.getId()%>">
+                                                        <input type="checkbox" name="status" id="customSwitch"
+                                                               <%= appointment.getStatus().equals("Ya Atendido") ? "checked" : ""%>>
+                                                        <span class="slider"></span>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <%
+                                                }
+                                            } else {
+                                            %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No hay turnos disponibles</td>
+                                            </tr>
+                                            <%
+                                                }
+                                            %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Jose Almir&oacute;n 2025</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
             </div>
+            <!-- End of Content Wrapper -->
+
         </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded buttonTop" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
+
         <script>
-            document.querySelectorAll('input[type="checkbox"]').forEach(function (toggle) {
-                toggle.addEventListener('change', function () {
+            document.querySelectorAll('.custom-switch .slider').forEach(function (slider) {
+                slider.addEventListener('click', function () {
+                    // Encuentra el checkbox relacionado dentro del contenedor .custom-switch
+                    const checkbox = slider.closest('.custom-switch').querySelector('input[type="checkbox"]');
+
+                    // Cambia el estado del checkbox manualmente
+                    checkbox.checked = !checkbox.checked;
+
+                    // Muestra el estado en la consola
+                    console.log(`Checkbox estÃ¡ ${checkbox.checked ? 'activado' : 'desactivado'}`);
+
                     this.closest('form').submit();
                 });
             });
+
         </script>
+
     </body>
+
 </html>

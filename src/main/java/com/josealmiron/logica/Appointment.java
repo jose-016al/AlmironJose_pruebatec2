@@ -73,10 +73,16 @@ public class Appointment implements Serializable {
         this.citizen = citizen;
     }
 
-    public String getAssignedDateFormatted() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
-        return assignedDate.format(formatter);
+    public String[] getAssignedDateFormatted() {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter dateFormatterEdit = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+        String formattedDate = assignedDate.format(dateFormatter);
+        String formattedTime = assignedDate.format(timeFormatter);
+        String formattedDateEdit = assignedDate.format(dateFormatterEdit);
+
+        return new String[]{formattedDate, formattedTime, formattedDateEdit};
     }
 
 }

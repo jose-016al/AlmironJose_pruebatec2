@@ -7,44 +7,46 @@ public class Controladora {
 
     ControladoraPersistencia controlPersis = new ControladoraPersistencia();
 
-    public void crearCitizen(Citizen citizen) {
-        controlPersis.crearCitizen(citizen);
+    public void createCitizen(Citizen citizen) {
+        controlPersis.createCitizen(citizen);
     }
 
-    public void eliminarCitizen(Long id) {
-        controlPersis.eliminarCitizen(id);
+    public void deleteCitizen(Long id) {
+        controlPersis.deleteCitizen(id);
     }
 
-    public List<Citizen> traerCitizens() {
-        return controlPersis.traerCitizens();
+    public List<Citizen> getCitizens() {
+        return controlPersis.getCitizens();
     }
 
-    public void editarCitizen(Citizen citizen) {
-        controlPersis.editarCitizen(citizen);
+    public void editCitizen(Citizen citizen) {
+        controlPersis.editCitizen(citizen);
     }
     
     public Citizen getCitizen(Long id) {
         return controlPersis.getCitizen(id);
     }
     
-    public void crearAppointment(Appointment appointment, Long idCitizen) {
+    public boolean validateCitizen(String name, String surname, String email, String phone) {
+        return controlPersis.validateCitizen(name, surname, email, phone);
+    }
+    
+    public void createAppointment(Appointment appointment, Long idCitizen) {
         Citizen citizen = controlPersis.getCitizen(idCitizen);
         appointment.setCitizen(citizen);
-        controlPersis.crearAppointment(appointment);
+        controlPersis.createAppointment(appointment);
     }
 
-    public void eliminarAppointment(Long id) {
-        controlPersis.eliminarAppointment(id);
+    public void deleteAppointment(Long id) {
+        controlPersis.deleteAppointment(id);
     }
 
-    public List<Appointment> traerAppointments() {
-        return controlPersis.traerAppointments();
+    public List<Appointment> getAppointments() {
+        return controlPersis.getAppointments();
     }
 
-    public void editarAppointment(Appointment appointment, Long idCitizen) {
-        Citizen citizen = controlPersis.getCitizen(idCitizen);
-        appointment.setCitizen(citizen);
-        controlPersis.editarAppointment(appointment);
+    public void editAppointment(Appointment appointment) {
+        controlPersis.editAppointment(appointment);
     }
     
     public Appointment getAppointment(Long id) {

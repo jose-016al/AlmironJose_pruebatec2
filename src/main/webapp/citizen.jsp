@@ -2,84 +2,139 @@
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-        <title>TurnerApp</title>
-    </head>
-    <body>
-        <%@include file="header.jsp"%>
-        <div class="w-full md:w-4/5 mx-auto mt-20">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold text-white">Ciudadanos</h2>
-                <a href="newCitizen.jsp" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                    Añadir
-                </a>
+<html lang="es">
+    <%@include file="head.jsp"%>
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%@include file="sidebar.jsp"%>
+            <!-- End of Sidebar -->
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid mt-4">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <!-- Sidebar Toggle (Topbar) -->
+                            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                                <i class="fa fa-bars"></i>
+                            </button>
+
+                            <!-- Page Heading -->
+                            <h1 class="h3 m-0 text-gray-800">Ciudadanos</h1>
+                        </div>
+
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Apellidos</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Telefono</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%
+                                                List<Citizen> citizens = (List<Citizen>) session.getAttribute("citizens");
+                                                if (citizens != null && !citizens.isEmpty()) {
+                                                    for (Citizen citizen : citizens) {
+                                            %>
+                                            <tr>
+                                                <th><%= citizen.getId()%></th>
+                                                <td><%= citizen.getName()%></td>
+                                                <td><%= citizen.getSurname()%></td>
+                                                <td><%= citizen.getEmail()%></td>
+                                                <td><%= citizen.getPhone()%></td>
+                                                <td class="d-flex justify-content-around">
+                                                    <form action="SvCitizenUpdate" method="GET">
+                                                        <input type="hidden" name="citizenId" value="<%=citizen.getId()%>">
+                                                        <button type="submit" class="btn btn-success btn-circle btn-sm">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form action="SvCitizenDelete" method="POST">
+                                                        <input type="hidden" name="citizenId" value="<%=citizen.getId()%>">
+                                                        <button type="submit" class="btn btn-danger btn-circle btn-sm">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <%
+                                                }
+                                            } else {
+                                            %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No hay ciudadanos disponibles</td>
+                                            </tr>
+                                            <%
+                                                }
+                                            %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Jose Almir&oacute;n 2025</span>
+                        </div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
+
             </div>
-            <div class="relative overflow-x-auto sm:rounded-lg w-full mt-3">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-400">
-                    <thead class="text-xs text-gray-400 uppercase bg-gray-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                ID
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Nombre
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Apellidos
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Email
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Telefono
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            List<Citizen> citizens = (List<Citizen>) session.getAttribute("citizens");
-                            if (citizens != null && !citizens.isEmpty()) {
-                                for (Citizen citizen : citizens) {
-                        %>
-                        <tr class="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700">
-                            <th class="px-6 py-4">
-                                <%= citizen.getId()%>
-                            </th>
-                            <td class="px-6 py-4"><%= citizen.getName()%></td>
-                            <td class="px-6 py-4"><%= citizen.getSurname()%></td>
-                            <td class="px-6 py-4"><%= citizen.getEmail()%></td>
-                            <td class="px-6 py-4"><%= citizen.getPhone()%></td>
-                            <td class="px-6 py-4 flex items-center space-x-3">
-                                <form action="SvCitizenUpdate" method="GET">
-                                    <input type="hidden" name="citizenId" value="<%=citizen.getId()%>">
-                                    <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2 focus:outline-none">Editar</button>    
-                                </form>  
-                                <form action="SvCitizenDelete" method="POST">
-                                    <input type="hidden" name="citizenId" value="<%=citizen.getId()%>">
-                                    <button type="submit" class="focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-900 font-medium rounded-lg text-sm px-5 py-2">Eliminar</button>    
-                                </form>                        
-                            </td>
-                        </tr>
-                        <%
-                            }
-                        } else {
-                        %>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-500">No hay ciudadanos disponibles</td>
-                        </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
-            </div>
+            <!-- End of Content Wrapper -->
+
         </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded buttonTop" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
+
     </body>
+
 </html>

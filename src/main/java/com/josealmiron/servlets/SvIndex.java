@@ -1,6 +1,7 @@
 package com.josealmiron.servlets;
 
 import com.josealmiron.logica.Appointment;
+import com.josealmiron.logica.Citizen;
 import com.josealmiron.logica.Controladora;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -27,7 +28,15 @@ public class SvIndex extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Appointment> appointments = control.traerAppointments();
+        List<Citizen> citizens = control.getCitizens().stream()
+                .sorted(Comparator.comparing(Citizen::getName).thenComparing(Citizen::getSurname))
+                .collect(Collectors.toList());
+        request.getSession().setAttribute("citizens", citizens);
+
+        List<Appointment> appointments = control.getAppointments().stream()
+                .sorted(Comparator.comparing(Appointment::getAssignedDate))
+                .collect(Collectors.toList());
+        request.getSession().setAttribute("appointments", appointments);
 
         LocalDate today = LocalDate.now();
         List<Appointment> todaysAppointments = appointments.stream()
@@ -43,12 +52,12 @@ public class SvIndex extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         Long id = Long.valueOf(request.getParameter("appointmentId"));
         String status = request.getParameter("status");
-        
-        boolean isChecked = "true".equals(status) || "on".equals(status); 
-        
+
+        boolean isChecked = "true".equals(status) || "on".equals(status);
+
         Appointment appointment = control.getAppointment(id);
 
         if (isChecked) {
@@ -56,8 +65,8 @@ public class SvIndex extends HttpServlet {
         } else {
             appointment.setStatus("En Espera");
         }
-        
-        control.editarAppointment(appointment, id);
+
+        control.editAppointment(appointment);
 
         response.sendRedirect("SvIndex");
     }

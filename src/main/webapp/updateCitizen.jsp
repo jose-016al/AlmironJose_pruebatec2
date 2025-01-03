@@ -1,53 +1,120 @@
 <%@page import="com.josealmiron.logica.Citizen"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-        <title>TurnerApp</title>
-    </head>
-    <body>
-        <%@include file="header.jsp"%>
-        <%
-            Citizen citizen = (Citizen) session.getAttribute("citizenEdit");
-        %>
-        <div class="w-full md:w-4/5 mx-auto mt-20">
-            <div class="font-sans">
-                <div class="relative  flex flex-col sm:justify-center items-center">
-                    <div class="relative sm:max-w-sm w-full">
-                        <div class="card bg-blue-400 shadow-lg  w-full h-full rounded-3xl absolute  transform -rotate-6"></div>
-                        <div class="card bg-red-400 shadow-lg  w-full h-full rounded-3xl absolute  transform rotate-6"></div>
-                        <div class="relative w-full rounded-3xl  px-6 py-4 bg-gray-800 shadow-md">
-                            <form action="SvCitizenUpdate" method="POST">
-                                <h1 class="text-white text-center text-2xl font-semibold mb-4">Nuevo Ciudadano</h1>
-                                <div class="mb-3">
-                                    <label for="name" class="block mb-2 text-sm font-medium text-white">Nombre</label>
-                                    <input type="text" value="<%= citizen.getName() %>" name="name" class="bg-gray-700  border border-gray-600  text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 placeholder-gray-400" placeholder="Peter" required />
+<html lang="es">
+    <%@include file="head.jsp"%>
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%@include file="sidebar.jsp"%>
+            <!-- End of Sidebar -->
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid row mx-auto d-flex justify-content-center mt-4">
+
+                        <c:if test="${not empty error}">
+                            <p class="text-danger">${error}</p>
+                        </c:if>
+
+                        <div class="d-flex align-items-center col-12 mb-2">
+                            <!-- Sidebar Toggle (Topbar) -->
+                            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                        </div>
+
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4 col-12 col-md-8 col-lg-6 col-xl-5">
+
+                            <div class="card-body p-0">
+
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Editar ciudadano</h1>
+                                    </div>
+                                    <%
+                                        Citizen citizen = (Citizen) session.getAttribute("citizenEdit");
+                                    %>
+                                    <form action="SvCitizenUpdate" method="POST" class="user">
+                                        <div class="form-group">
+                                            <label for="name">Nombre</label>
+                                            <input type="text" name="name" value="<%= citizen.getName()%>" class="form-control rounded" placeholder="Peter" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="surname">Apellidos</label>
+                                            <input type="text" name="surname" value="<%= citizen.getSurname()%>" class="form-control rounded" placeholder="Anthony" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="email">Correo electronico</label>
+                                            <input type="email" name="email" value="<%= citizen.getEmail()%>" class="form-control rounded"
+                                                   placeholder="peter@anthony.com">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="phone">Telefono</label>
+                                            <input type="text" name="phone" value="<%= citizen.getPhone()%>" class="form-control rounded"
+                                                   placeholder="000 00 00 00">
+                                        </div>
+                                        <button type="submit"class="btn btn-primary btn-user btn-block">
+                                            Editar
+                                        </button>
+                                    </form>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="surname" class="block mb-2 text-sm font-medium text-white">Apellidos</label>
-                                    <input type="text" value="<%= citizen.getSurname() %>" name="surname" class="bg-gray-700  border border-gray-600  text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 placeholder-gray-400" placeholder="Anthony" required />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="block mb-2 text-sm font-medium text-white">Correo electronico</label>
-                                    <input type="email" value="<%= citizen.getEmail() %>" name="email" class="bg-gray-700  border border-gray-600  text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 placeholder-gray-400" placeholder="peter@anthony.com" required />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="phone" class="block mb-2 text-sm font-medium text-white">Telefono</label>
-                                    <input type="text" value="<%= citizen.getPhone() %>" name="phone" class="bg-gray-700  border border-gray-600  text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 placeholder-gray-400" placeholder="000 00 00 00" required />
-                                </div>
-                                <div class="mt-5 mb-5">
-                                    <button type="submit" class="bg-blue-500 w-full py-3 rounded-xl text-white shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out  transform hover:-translate-x hover:scale-105">
-                                        Añadir
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Jose Almir&oacute;n 2025</span>
                         </div>
                     </div>
-                </div>
+                </footer>
+                <!-- End of Footer -->
+
             </div>
+            <!-- End of Content Wrapper -->
+
         </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded buttonTop" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
+
     </body>
+
 </html>

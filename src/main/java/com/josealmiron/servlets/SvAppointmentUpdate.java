@@ -7,8 +7,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,9 +28,7 @@ public class SvAppointmentUpdate extends HttpServlet {
 
         Long id = Long.valueOf(request.getParameter("appointmentId"));
 
-        Appointment appointment = control.getAppointment(id);
-
-        request.getSession().setAttribute("appointmentEdit", appointment);
+        request.getSession().setAttribute("appointmentEdit", control.getAppointment(id));
 
         response.sendRedirect("updateAppointment.jsp");
     }
@@ -44,30 +40,21 @@ public class SvAppointmentUpdate extends HttpServlet {
         String date = request.getParameter("date");
         String time = request.getParameter("time");
         String status = request.getParameter("status");
-        Long citizen = Long.valueOf(request.getParameter("citizen"));
         String description = request.getParameter("description");
 
-        try {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalTime localTime = LocalTime.parse(time);
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
 
-            LocalDate localDate = LocalDate.parse(date, dateFormatter);
-            LocalTime localTime = LocalTime.parse(time);
+        Appointment appointment = (Appointment) request.getSession().getAttribute("appointmentEdit");
+        appointment.setAssignedDate(dateTime);
+        appointment.setStatus(status);
+        appointment.setDescription(description);
 
-            LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
+        control.editAppointment(appointment);
 
-            Appointment appointment = (Appointment) request.getSession().getAttribute("appointmentEdit");
-            appointment.setAssignedDate(dateTime);
-            appointment.setStatus(status);
-            appointment.setDescription(description);
-
-            control.editarAppointment(appointment, citizen);
-
-            response.sendRedirect("SvAppointment");
-        } catch (Exception e) {
-            Logger.getLogger(SvAppointment.class.getName()).log(Level.SEVERE, "Error al crear la cita", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ocurrió un error al procesar la solicitud.");
-        }
+        response.sendRedirect("SvAppointment");
     }
 
     /**

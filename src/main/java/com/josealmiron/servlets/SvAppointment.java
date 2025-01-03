@@ -1,7 +1,6 @@
 package com.josealmiron.servlets;
 
 import com.josealmiron.logica.Appointment;
-import com.josealmiron.logica.Citizen;
 import com.josealmiron.logica.Controladora;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -10,8 +9,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,39 +30,30 @@ public class SvAppointment extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String dateParam = request.getParameter("date"); 
-        String statusParam = request.getParameter("status"); 
+        String dateParam = request.getParameter("date");
+        String statusParam = request.getParameter("status");
 
-        System.out.println(dateParam);
-        System.out.println(statusParam);
+        List<Appointment> appointments = control.getAppointments().stream()
+                .sorted(Comparator.comparing(Appointment::getAssignedDate))
+                .collect(Collectors.toList());
+        request.getSession().setAttribute("appointments", appointments);
 
-        List<Appointment> appointments = control.traerAppointments();
+        if (dateParam != null && !dateParam.isEmpty()) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(dateParam, dateFormatter);
 
-        if (request.getSession().getAttribute("citizens") == null) {
-            List<Citizen> listCitizens = control.traerCitizens();
-            request.getSession().setAttribute("citizens", listCitizens);
-        }
+            List<Appointment> filteredAppointments = appointments.stream()
+                    .filter(a -> a.getAssignedDate().toLocalDate().equals(localDate))
+                    .sorted(Comparator.comparing(Appointment::getAssignedDate))
+                    .collect(Collectors.toList());
 
-        if (dateParam == null && statusParam == null) {
-            request.setAttribute("appointments", appointments);
-        } else {
-            if (dateParam != null && !dateParam.isEmpty()) {
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-                LocalDate localDate = LocalDate.parse(dateParam, dateFormatter);
-
-                List<Appointment> filteredAppointments = appointments.stream()
-                        .filter(a -> a.getAssignedDate().toLocalDate().equals(localDate))
-                        .sorted(Comparator.comparing(Appointment::getAssignedDate))
+            if (statusParam != null && !statusParam.isEmpty()) {
+                filteredAppointments = filteredAppointments.stream()
+                        .filter(a -> a.getStatus().equalsIgnoreCase(statusParam))
                         .collect(Collectors.toList());
-
-                if (statusParam != null && !statusParam.isEmpty()) {
-                    filteredAppointments = filteredAppointments.stream()
-                            .filter(a -> a.getStatus().equalsIgnoreCase(statusParam))
-                            .collect(Collectors.toList());
-                }
-
-                request.setAttribute("appointments", filteredAppointments);
             }
+
+            request.getSession().setAttribute("appointments", filteredAppointments);
 
         }
 
@@ -78,30 +66,22 @@ public class SvAppointment extends HttpServlet {
 
         String date = request.getParameter("date");
         String time = request.getParameter("time");
-        String citizen = request.getParameter("citizen");
+        Long citizen = Long.valueOf(request.getParameter("citizen"));
         String description = request.getParameter("description");
 
-        try {
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalTime localTime = LocalTime.parse(time);
 
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
 
-            LocalDate localDate = LocalDate.parse(date, dateFormatter);
-            LocalTime localTime = LocalTime.parse(time);
+        Appointment appointment = new Appointment();
+        appointment.setAssignedDate(dateTime);
+        appointment.setStatus("En Espera");
+        appointment.setDescription(description);
 
-            LocalDateTime dateTime = LocalDateTime.of(localDate, localTime);
+        control.createAppointment(appointment, citizen);
 
-            Appointment appointment = new Appointment();
-            appointment.setAssignedDate(dateTime);
-            appointment.setStatus("En espera");
-            appointment.setDescription(description);
-
-            control.crearAppointment(appointment, Long.parseLong(citizen));
-
-            response.sendRedirect("SvAppointment");
-        } catch (Exception e) {
-            Logger.getLogger(SvAppointment.class.getName()).log(Level.SEVERE, "Error al crear la cita", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ocurrió un error al procesar la solicitud.");
-        }
+        response.sendRedirect("SvAppointment");
     }
 
     /**

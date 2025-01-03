@@ -31,14 +31,14 @@ public class SvCitizenDelete extends HttpServlet {
 
         Long id = Long.valueOf(request.getParameter("citizenId"));
 
-        List<Appointment> appointments = control.traerAppointments();
+        List<Appointment> appointments = control.getAppointments();
         
         appointments.stream()
                 .filter(a -> a.getCitizen().getId().equals(id))
                 .map(Appointment::getId)
-                .forEach(control::eliminarAppointment);
+                .forEach(control::deleteAppointment);
         
-        control.eliminarCitizen(id);
+        control.deleteCitizen(id);
 
         response.sendRedirect("SvCitizen");
     }

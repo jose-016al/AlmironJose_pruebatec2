@@ -2,105 +2,162 @@
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="css/styles.css"/>
-        <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
-        <title>TurnerApp</title>
-    </head>
-    <body>
-        <%@include file="header.jsp"%>
-        <div class="w-full md:w-4/5 mx-auto mt-20">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center space-x-3">
-                    <h2 class="text-2xl font-bold text-white">Turnos</h2>
-                    <a href="newAppointment.jsp" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
-                        Añadir
-                    </a>    
-                </div>
+<html lang="es">
+    <%@include file="head.jsp"%>
+    <body id="page-top">
 
-                <form action="SvAppointment" method="GET" class="flex items-center space-x-3">
-                    <div>
-                        <input datepicker name="date" type="text" class="bg-gray-700  border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2 placeholder-gray-400" placeholder="Selecciona fecha" required>
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%@include file="sidebar.jsp"%>
+            <!-- End of Sidebar -->
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid mt-4">
+
+                        <div class="d-flex align-items-center justify-content-between row mb-2">
+                            <div class="d-flex align-items-center col-12 col-md-1">
+                                <!-- Sidebar Toggle (Topbar) -->
+                                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                                    <i class="fa fa-bars"></i>
+                                </button>
+
+                                <!-- Page Heading -->
+                                <h1 class="h3 m-0 text-gray-800">Turnos</h1>
+                            </div>
+
+                            <form action="SvAppointment" method="GET" class="d-flex justify-content-end align row col-12 col-md-10 col-lg-6">
+                                <!-- Filter Appointments -->
+                                <div class="p-2 col-12 col-md-4 col-lg-4">
+                                    <input type="date" name="date" class="form-control rounded" required>
+                                </div>
+                                <div class="p-2 col-12 col-md-4 col-lg-4">
+                                    <select name="status" class="form-control" <option value="" selected>No enviar nada</option>
+                                        <option value="" selected>No enviar nada</option>
+                                        <option value="En espera">En espera</option>
+                                        <option value="Ya atendido">Ya atendido</option>
+                                    </select>
+                                </div>
+                                <div class="p-2 col-12 col-md-4 col-lg-3">
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                                        Filtrar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- DataTales Example -->
+                        <div class="card shadow mb-4">
+
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Fecha</th>
+                                                <th scope="col">Hora</th>
+                                                <th scope="col">Descripci&oacute;n</th>
+                                                <th scope="col">Estado</th>
+                                                <th scope="col">Ciudadano</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <%
+                                                List<Appointment> appointments = (List<Appointment>) session.getAttribute("appointments");
+                                                if (appointments != null && !appointments.isEmpty()) {
+                                                    for (Appointment appointment : appointments) {
+                                            %>
+                                            <tr>
+                                                <th><%= appointment.getId()%></th>
+                                                <td><%= appointment.getAssignedDateFormatted()[0]%></td>
+                                                <td><%= appointment.getAssignedDateFormatted()[1]%></td>
+                                                <td><%= appointment.getDescription()%></td>
+                                                <td><%= appointment.getStatus()%></td>
+                                                <td><%= appointment.getCitizen()%></td>
+                                                <td class="d-flex justify-content-around">
+                                                    <form action="SvAppointmentUpdate" method="GET">
+                                                        <input type="hidden" name="appointmentId" value="<%=appointment.getId()%>">
+                                                        <button type="submit" class="btn btn-success btn-circle btn-sm">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form action="SvAppointmentDelete" method="POST">
+                                                        <input type="hidden" name="appointmentId" value="<%=appointment.getId()%>">
+                                                        <button type="submit" class="btn btn-danger btn-circle btn-sm">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <%
+                                                }
+                                            } else {
+                                            %>
+                                            <tr>
+                                                <td colspan="7" class="text-center">No hay turnos disponibles</td>
+                                            </tr>
+                                            <%
+                                                }
+                                            %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                    <div>
-                        <select name="status" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 placeholder-gray-400">
-                            <option value="" selected>No enviar nada</option>
-                            <option value="En espera">En espera</option>
-                            <option value="Ya atendido">Ya atendido</option>
-                        </select>
+                    <!-- /.container-fluid -->
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            <span>Copyright &copy; Jose Almir&oacute;n 2025</span>
+                        </div>
                     </div>
-                    <div >
-                        <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2 focus:outline-none">
-                            Filtrar
-                        </button>
-                    </div>
-                </form>
+                </footer>
+                <!-- End of Footer -->
+
             </div>
-            <div class="relative overflow-x-auto sm:rounded-lg w-full mt-3">
-                <table class="w-full text-sm text-left rtl:text-right text-gray-400">
-                    <thead class="text-xs text-gray-400 uppercase bg-gray-700">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                ID
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Fecha
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Descripción
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Estado
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Ciudadano
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <%
-                            List<Appointment> appointments = (List<Appointment>) request.getAttribute("appointments");
-                            if (appointments != null && !appointments.isEmpty()) {
-                                for (Appointment appointment : appointments) {
-                        %>
-                        <tr class="odd:bg-gray-900 even:bg-gray-800 border-b border-gray-700">
-                            <th class="px-6 py-4">
-                                <%= appointment.getId()%>
-                            </th>
-                            <td class="px-6 py-4"><%= appointment.getAssignedDateFormatted()%></td>
-                            <td class="px-6 py-4"><%= appointment.getDescription()%></td>
-                            <td class="px-6 py-4"><%= appointment.getStatus()%></td>
-                            <td class="px-6 py-4"><%= appointment.getCitizen()%></td>
-                            <td class="px-6 py-4 flex items-center space-x-3">
-                                <form action="SvAppointmentUpdate" method="GET">
-                                    <input type="hidden" name="appointmentId" value="<%=appointment.getId()%>">
-                                    <button type="submit" class="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2 focus:outline-none">Editar</button>    
-                                </form>  
-                                <form action="SvAppointmentDelete" method="POST">
-                                    <input type="hidden" name="appointmentId" value="<%=appointment.getId()%>">
-                                    <button type="submit" class="focus:outline-none text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-900 font-medium rounded-lg text-sm px-5 py-2">Eliminar</button>    
-                                </form>
-                            </td>
-                        </tr>
-                        <%
-                            }
-                        } else {
-                        %>
-                        <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-500">No hay turnos disponibles</td>
-                        </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
-            </div>
+            <!-- End of Content Wrapper -->
+
         </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded buttonTop" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="vendor/jquery/jquery.min.js"></script>
+        <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="js/sb-admin-2.min.js"></script>
+
+        <!-- Page level plugins -->
+        <script src="vendor/chart.js/Chart.min.js"></script>
+
+        <!-- Page level custom scripts -->
+        <script src="js/demo/chart-area-demo.js"></script>
+        <script src="js/demo/chart-pie-demo.js"></script>
+
     </body>
+
 </html>

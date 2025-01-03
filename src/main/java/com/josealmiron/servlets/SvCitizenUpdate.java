@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(name = "SvCitizenUpdate", urlPatterns = {"/SvCitizenUpdate"})
 public class SvCitizenUpdate extends HttpServlet {
-    
+
     private Controladora control = new Controladora();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -21,8 +21,8 @@ public class SvCitizenUpdate extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-         Long id = Long.valueOf(request.getParameter("citizenId"));
+
+        Long id = Long.valueOf(request.getParameter("citizenId"));
 
         Citizen citizen = control.getCitizen(id);
 
@@ -34,11 +34,17 @@ public class SvCitizenUpdate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
+
+        if (!control.validateCitizen(name, surname, email, phone)) {
+            request.setAttribute("error", "Datos inválidos. Verifica los campos ingresados.");
+            request.getRequestDispatcher("/updateCitizen.jsp").forward(request, response);
+            return;
+        }
 
         Citizen citizen = (Citizen) request.getSession().getAttribute("citizenEdit");
         citizen.setName(name);
@@ -46,7 +52,7 @@ public class SvCitizenUpdate extends HttpServlet {
         citizen.setEmail(email);
         citizen.setPhone(phone);
 
-        control.editarCitizen(citizen);
+        control.editCitizen(citizen);
 
         response.sendRedirect("SvCitizen");
     }
