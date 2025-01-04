@@ -56,16 +56,10 @@ public class SvIndex extends HttpServlet {
         Long id = Long.valueOf(request.getParameter("appointmentId"));
         String status = request.getParameter("status");
 
-        boolean isChecked = "true".equals(status) || "on".equals(status);
+        String newStatus = ("true".equals(status) || "on".equals(status)) ? "Ya Atendido" : "En Espera";
 
         Appointment appointment = control.getAppointment(id);
-
-        if (isChecked) {
-            appointment.setStatus("Ya Atendido");
-        } else {
-            appointment.setStatus("En Espera");
-        }
-
+        appointment.setStatus(newStatus);
         control.editAppointment(appointment);
 
         response.sendRedirect("SvIndex");

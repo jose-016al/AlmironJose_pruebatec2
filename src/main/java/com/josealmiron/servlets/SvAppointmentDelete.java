@@ -30,7 +30,7 @@ public class SvAppointmentDelete extends HttpServlet {
 
         Long id = Long.valueOf(request.getParameter("appointmentId"));
 
-        control.deleteAppointment(Long.valueOf(request.getParameter("appointmentId")));
+        control.deleteAppointment(id);
         
         response.sendRedirect("SvAppointment");
     }

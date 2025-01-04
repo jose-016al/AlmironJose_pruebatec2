@@ -27,8 +27,10 @@ public class SvAppointmentUpdate extends HttpServlet {
             throws ServletException, IOException {
 
         Long id = Long.valueOf(request.getParameter("appointmentId"));
+        
+        Appointment appointment = control.getAppointment(id);
 
-        request.getSession().setAttribute("appointmentEdit", control.getAppointment(id));
+        request.getSession().setAttribute("appointmentEdit", appointment);
 
         response.sendRedirect("updateAppointment.jsp");
     }

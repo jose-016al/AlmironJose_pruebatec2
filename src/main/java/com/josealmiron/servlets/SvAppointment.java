@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,28 +37,26 @@ public class SvAppointment extends HttpServlet {
         List<Appointment> appointments = control.getAppointments().stream()
                 .sorted(Comparator.comparing(Appointment::getAssignedDate))
                 .collect(Collectors.toList());
+
         request.getSession().setAttribute("appointments", appointments);
 
-        if (dateParam != null && !dateParam.isEmpty()) {
-            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(dateParam, dateFormatter);
+        // Filtrar por fecha si esta presente
+        Optional<LocalDate> optionalDate = Optional.ofNullable(dateParam)
+                .filter(param -> !param.isEmpty())
+                .map(param -> LocalDate.parse(param, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-            List<Appointment> filteredAppointments = appointments.stream()
-                    .filter(a -> a.getAssignedDate().toLocalDate().equals(localDate))
-                    .sorted(Comparator.comparing(Appointment::getAssignedDate))
-                    .collect(Collectors.toList());
+        // Filtrar por fecha y status si estan presentes
+        List<Appointment> filteredAppointments = appointments.stream()
+                .filter(a -> optionalDate.map(date -> a.getAssignedDate().toLocalDate().equals(date)).orElse(true)) 
+                .filter(a -> Optional.ofNullable(statusParam)
+                .filter(param -> !param.isEmpty())
+                .map(param -> a.getStatus().equalsIgnoreCase(param))
+                .orElse(true)) 
+                .collect(Collectors.toList());
 
-            if (statusParam != null && !statusParam.isEmpty()) {
-                filteredAppointments = filteredAppointments.stream()
-                        .filter(a -> a.getStatus().equalsIgnoreCase(statusParam))
-                        .collect(Collectors.toList());
-            }
-
-            request.getSession().setAttribute("appointments", filteredAppointments);
-
-        }
-
+        request.getSession().setAttribute("appointments", filteredAppointments);
         request.getRequestDispatcher("appointment.jsp").forward(request, response);
+
     }
 
     @Override
