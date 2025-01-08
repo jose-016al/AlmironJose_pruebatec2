@@ -1,22 +1,109 @@
 # Prueba técnica 2 - Sistema de turnos
-La aplicación es un panel de control para gestionar turnos relacionados con trámites gubernamentales. Incluye un módulo para ciudadanos y sus respectivos turnos. Cada sección del panel se explicará en detalle más adelante. Además, se ha diseñado un sidebar que estará disponible en todo momento, facilitando una navegación cómoda y rápida entre las diferentes secciones.
-## Inicio
+La aplicación es un panel de control para gestionar turnos relacionados con trámites gubernamentales. Incluye un módulo para ciudadanos y sus respectivos turnos. Cada sección del panel se explicará en detalle más adelante. 
+
+## **Tabla de Contenidos**
+- [Instalación](#instalación)
+- [Características](#características)
+- [Tecnologías Usadas](#tecnologías-usadas)
+
+## **Instalación**
+Sigue estos pasos para instalar y configurar el proyecto en tu entorno local:  
+
+1. Clona este repositorio:
+```bash
+git clone https://github.com/jose-016al/AlmironJose_pruebatec2.git
+```
+
+2. Asegúrate de que tienes un servidor MySQL en funcionamiento y crea una base de datos llamada `TurnerApp` para que la aplicación pueda generar las tablas correspondientes:
+```bash
+CREATE DATABASE TurnerApp
+```
+
+3.Configura el archivo `persistence.xml`:  
+Localiza el archivo `persistence.xml` en la ruta `src/main/resources/META-INF` y actualiza las credenciales de acceso a tu SGBD, así como la URL de conexión, según tu entorno. Aquí tienes un ejemplo del archivo con los campos que puedes modificar:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+   <persistence-unit name="TurnerPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>com.josealmiron.logica.Citizen</class>
+    <class>com.josealmiron.logica.Appointment</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/turnerApp?serverTimezone=UTC"/>
+      <property name="javax.persistence.jdbc.user" value="user"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="user"/>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+```
+- `javax.persistence.jdbc.url`: Cambia `localhost` y `3306` si tu servidor MySQL está en una dirección diferente o usa otro puerto.
+- `javax.persistence.jdbc.user`: Introduce el nombre de usuario de tu base de datos.
+- `javax.persistence.jdbc.password`: Introduce la contraseña del usuario.
+
+4. Configura el servidor web:  
+
+El proyecto está diseñado para ejecutarse en Apache Tomcat y desarrollado en NetBeans. Para conectar la aplicación con el servidor:  
+
+- Asegúrate de que Tomcat está instalado y configurado en tu sistema.
+- Abre el proyecto en NetBeans.
+- Al ejecutar el proyecto, NetBeans te guiará paso a paso para configurar la conexión con el servidor Tomcat.
+
+5. Ejecuta la aplicación:  
+
+Una vez completados los pasos anteriores, ejecuta el proyecto desde NetBeans y accede a la aplicación a través de tu navegador en la URL proporcionada por el servidor.
+
+## Características
+Esta aplicación de gestión de turnos permite realizar las siguientes acciones:  
+
+- Gestión de Ciudadanos:
+  - Crear nuevos ciudadanos.
+  - Editar la información de ciudadanos existentes.
+  - Eliminar ciudadanos registrados.
+- Gestión de Turnos:
+  - Crear turnos asociados a ciudadanos previamente registrados.
+  - Editar la información de turnos existentes.
+  - Eliminar turnos registrados.
+- Filtrado de Turnos:
+  - Filtrar turnos por fecha.
+  - Filtrar turnos por estado ("En Espera", "Ya Atendido").
+
+Estas funcionalidades ofrecen una forma sencilla y eficiente de administrar turnos y ciudadanos en el sistema, adaptándose a diferentes necesidades organizativas.
+
+## Tecnologías Usadas
+El proyecto utiliza las siguientes tecnologías y herramientas:
+- Frontend:
+  - JSP (JavaServer Pages): Para la creación de vistas dinámicas del lado del servidor.
+- Backend:
+  - Java Persistence API (JPA): Para la gestión de datos y operaciones con la base de datos.
+  - Apache Tomcat: Servidor de aplicaciones utilizado para desplegar la aplicación.
+- Base de Datos:
+  - MySQL: Sistema de gestión de bases de datos relacional.
+- IDE:
+  - NetBeans: Entorno de desarrollo integrado utilizado para la programación y despliegue del proyecto.
+
+## Uso
+La aplicación tiene varias páginas principales, cada una diseñada para cubrir diferentes funcionalidades. A continuación, se describe cada una:  
+
+### Inicio
 En esta sección se realiza una llamada a todos los turnos y se filtran según la fecha actual, mostrando únicamente los turnos correspondientes al día de hoy, ordenados por hora. Además, el panel principal permite cambiar el estado de un turno de manera sencilla mediante un interruptor. Este switch, que se acciona dinámicamente, facilita el cambio de estado entre `En Espera` y `Ya Atendido`, o viceversa, según sea necesario. El interruptor aparecerá desactivado cuando el turno esté `En Espera` y se activará automáticamente al marcar el turno como `Ya Atendido`.
 ![inicio](./img/TurnerApp-1.png)
-## Ciudadanos
+### Ciudadanos
 Esta sección muestra todos los ciudadanos disponibles, ordenados alfabéticamente. El panel incluye opciones para editar y eliminar ciudadanos. Al eliminar un ciudadano, también se eliminarán automáticamente todos los turnos relacionados con él, evitando inconsistencias en los datos. Por otro lado, la opción de edición redirige a un formulario similar al de alta, que muestra la información existente del ciudadano y permite actualizar ciertos valores. Tras realizar cualquiera de estas acciones, el sistema redirigirá de vuelta al panel de ciudadanos, donde se reflejarán los cambios de forma dinámica y actualizada.
 ![inicio](./img/TurnerApp-3.png)
-## Nuevo ciudadano
+### Nuevo ciudadano
 Esta sección es fundamental, ya que permite añadir nuevos turnos, lo cual no sería posible sin ciudadanos registrados. Aquí se encuentra un formulario de alta sencillo que solicita los datos del ciudadano: nombre, apellidos, correo electrónico y teléfono. Los dos últimos campos son opcionales, mientras que los campos de nombre y apellidos son obligatorios. El formulario incluye validaciones para evitar errores, como introducir números en campos de texto. Estas mismas validaciones se aplican al formulario de edición de ciudadanos mencionado previamente. Una vez completado el alta, el sistema redirige automáticamente al panel de ciudadanos, donde se podrán visualizar los cambios de manera inmediata.
 ![inicio](./img/TurnerApp-2.png)
-## Turnos
+### Turnos
 Esta sección presenta un panel con todos los turnos, ordenados por fecha. Incluye opciones para editar y eliminar turnos, similares a las del apartado de ciudadanos. Además, dispone de un sistema de filtrado por fecha para facilitar la navegación, ya que, aunque los turnos están ordenados cronológicamente, manejar una gran cantidad de datos o buscar una fecha específica podría ser complicado.
 
 El filtro consiste en un formulario sencillo que permite seleccionar una fecha y, opcionalmente, filtrar los turnos según su estado: `En Espera` o `Ya Atendidos`. Cabe destacar que el filtrado por estado depende de la selección de una fecha, ya que este campo es obligatorio.
 
 Si se desea recuperar la vista original con todos los turnos, basta con hacer clic nuevamente en el enlace de `Turnos`del sidebar, lo que recargará la lista sin aplicar ningún filtro.
 ![inicio](./img/TurnerApp-4.png)
-## Nuevo Turno
+### Nuevo Turno
 Esta sección presenta un formulario para dar de alta un turno. Los campos disponibles son: fecha, hora, ciudadano y descripción. Mientras que el campo de descripción es opcional, los demás son obligatorios.
 
 El formulario no requiere validaciones adicionales, ya que los campos están configurados para minimizar errores: la fecha y la hora se seleccionan mediante controles que impiden valores inválidos, y el ciudadano se elige de un desplegable con las opciones disponibles.
