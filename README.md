@@ -14,9 +14,9 @@ Sigue estos pasos para instalar y configurar el proyecto en tu entorno local:
 git clone https://github.com/jose-016al/AlmironJose_pruebatec2.git
 ```
 
-2. Asegúrate de que tienes un servidor MySQL en funcionamiento y crea una base de datos llamada `TurnerApp` para que la aplicación pueda generar las tablas correspondientes:
+2. Asegúrate de que tienes un servidor MySQL en funcionamiento y crea una base de datos llamada `turnerApp` para que la aplicación pueda generar las tablas correspondientes:
 ```bash
-CREATE DATABASE TurnerApp
+CREATE DATABASE turnerApp
 ```
 
 3.Configura el archivo `persistence.xml`:  
